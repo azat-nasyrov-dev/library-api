@@ -18,6 +18,6 @@ export class BookEntity {
   @Column('simple-array')
   genres: string[];
 
-  @ManyToOne(() => UserEntity, (user) => user.books)
+  @ManyToOne(() => UserEntity, (user) => user.books, { eager: true })
   user: UserEntity;
 }
