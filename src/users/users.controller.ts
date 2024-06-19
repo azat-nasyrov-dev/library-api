@@ -20,11 +20,16 @@ import { UserResponseInterface } from './types/user-response.interface';
 import { AuthGuard } from './guards/auth.guard';
 import { RolesGuard } from './guards/roles.guard';
 import { RolesDecorator } from './decorators/roles.decorator';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@ApiTags('Users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @ApiOperation({ summary: 'Get the current authenticated user' })
+  @ApiResponse({ status: 200, description: 'The authenticated user' })
   @Get('me')
   @UseGuards(AuthGuard)
   public async mustBeAuthenticated(
@@ -33,6 +38,8 @@ export class UsersController {
     return this.usersService.buildUserResponse(user);
   }
 
+  @ApiOperation({ summary: 'Register user' })
+  @ApiResponse({ status: 201, description: 'The user has been successfully registered' })
   @Post('register')
   @UsePipes(new ValidationPipe({ whitelist: true }))
   public async register(@Body() registerDto: RegisterDto): Promise<UserResponseInterface> {
@@ -40,6 +47,8 @@ export class UsersController {
     return this.usersService.buildUserResponse(user);
   }
 
+  @ApiOperation({ summary: 'Login user' })
+  @ApiResponse({ status: 200, description: 'The user has been successfully login' })
   @Post('login')
   @UsePipes(new ValidationPipe({ whitelist: true }))
   @HttpCode(200)
@@ -47,6 +56,8 @@ export class UsersController {
     return await this.usersService.login(loginDto);
   }
 
+  @ApiOperation({ summary: 'Change the user role' })
+  @ApiResponse({ status: 200, description: 'The user role has been successfully changed' })
   @Put(':id/role')
   @UseGuards(AuthGuard, RolesGuard)
   @RolesDecorator(UserRole.ADMIN)
