@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserEntity } from './entities/user.entity';
+import { UserEntity, UserRole } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { RegisterDto } from './dto/register.dto';
@@ -37,6 +37,7 @@ export class UsersService {
         email: registerDto.email,
         username: registerDto.username,
         passwordHash,
+        roles: UserRole.ADMIN,
       });
 
       await this.userRepository.save(newUser);
@@ -64,7 +65,7 @@ export class UsersService {
     try {
       const user = await this.userRepository.findOne({
         where: { username: loginDto.username },
-        select: ['id', 'email', 'username', 'passwordHash'],
+        select: ['id', 'email', 'username', 'passwordHash', 'roles'],
       });
 
       if (!user) {
@@ -95,24 +96,41 @@ export class UsersService {
     }
   }
 
+  public async changeUserRole(id: string, newRole: number): Promise<UserEntity> {
+    const user = await this.userRepository.findOne({ where: { id } });
+
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    user.roles = newRole;
+    return await this.userRepository.save(user);
+  }
+
+  public async hasRole(user: UserEntity, role: number): Promise<boolean> {
+    return (user.roles & role) === role;
+  }
+
   private generateJwt(user: UserEntity): string {
     return sign(
       {
         id: user.id,
         email: user.email,
         username: user.username,
+        roles: user.roles,
       },
       this.configService.get<string>('JWT_SECRET'),
     );
   }
 
   public buildUserResponse(user: UserEntity): UserResponseInterface {
-    const { id, email, username } = user;
+    const { id, email, username, roles } = user;
     return {
       user: {
         id,
         email,
         username,
+        roles,
         token: this.generateJwt(user),
       },
     };
