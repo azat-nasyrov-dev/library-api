@@ -1,5 +1,5 @@
-import { UserEntity } from '../entities/user.entity';
+import { UserType } from './user.type';
 
 export interface UserResponseInterface {
-  user: UserEntity & { token: string };
+  user: UserType & { token: string };
 }
