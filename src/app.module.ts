@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './config/typeorm.config';
 import { UsersModule } from './users/users.module';
 import { AuthMiddleware } from './users/middlewares/auth.middleware';
+import { BooksModule } from './books/books.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { AuthMiddleware } from './users/middlewares/auth.middleware';
       useClass: TypeOrmConfigService,
     }),
     UsersModule,
+    BooksModule,
   ],
 })
 export class AppModule implements NestModule {
