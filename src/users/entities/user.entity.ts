@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { BookEntity } from '../../books/entities/book.entity';
 
 export const enum UserRole {
   USER = 1 << 0,
@@ -21,4 +22,7 @@ export class UserEntity {
 
   @Column({ default: UserRole.USER })
   roles: number;
+
+  @OneToMany(() => BookEntity, (book) => book.user)
+  books: BookEntity[];
 }

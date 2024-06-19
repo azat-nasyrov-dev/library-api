@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { UserEntity } from '../../users/entities/user.entity';
 
 @Entity({ name: 'books' })
 export class BookEntity {
@@ -16,4 +17,7 @@ export class BookEntity {
 
   @Column('simple-array')
   genres: string[];
+
+  @ManyToOne(() => UserEntity, (user) => user.books)
+  user: UserEntity;
 }
