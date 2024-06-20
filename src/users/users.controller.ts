@@ -61,7 +61,7 @@ export class UsersController {
   @Put(':id/role')
   @UseGuards(AuthGuard, RolesGuard)
   @RolesDecorator(UserRole.ADMIN)
-  public async changeUserRole(@Param('id') id: string, @Body('role') role: number) {
+  public async changeUserRole(@Param('id') id: string, @Body('role') role: number): Promise<UserEntity> {
     return await this.usersService.changeUserRole(id, role);
   }
 }

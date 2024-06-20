@@ -44,7 +44,7 @@ export class BooksController {
   @ApiOperation({ summary: 'Get all books' })
   @ApiResponse({ status: 200, description: 'Books has been successfully received' })
   @Get()
-  public async findListOfBooks() {
+  public async findListOfBooks(): Promise<BookEntity[]> {
     return await this.booksService.findListOfBooks();
   }
 
